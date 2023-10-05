@@ -22,7 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy With Value 1
-        uses: "m4s-b3n/terraform-all-in-one@v1.1.0"
+        uses: "m4s-b3n/terraform-all-in-one@v1.0.0"
         with:          
           directory: "./terraform"
           apply: true
@@ -32,7 +32,7 @@ jobs:
         run: |
           echo "Running test 1..."
       - name: Deploy With Value 2
-        uses: "m4s-b3n/terraform-all-in-one@v1.1.0"
+        uses: "m4s-b3n/terraform-all-in-one@v1.0.0"
         with:          
           directory: "./terraform"
           apply: true
@@ -42,7 +42,7 @@ jobs:
         run: |
           echo "Running test 2..."
       - name: Destroy
-        uses: "m4s-b3n/terraform-all-in-one@v1.1.0"
+        uses: "m4s-b3n/terraform-all-in-one@v1.0.0"
         with:          
           directory: "./terraform"
           setup: false
@@ -58,29 +58,30 @@ You can configure additional command arguments with inputs.
 
 ## Inputs
 
-| Input Name | Description | Required | Default |
-|------------|-------------|----------|---------|
-| directory | The directory where the Terraform configuration files are located | false | . |
-| terraform-version | The version of Terraform to use | false | latest |
-| plan-file | The path to the plan file | false | plan.json |
-| init-args | The arguments to pass to terraform init | false |  |
-| validate-args | The arguments to pass to terraform validate | false |  |
-| fmt-args | The arguments to pass to terraform fmt | false | -check |
-| plan-args | The arguments to pass to terraform plan | false |  |
-| apply-args | The arguments to pass to terraform apply | false |  |
-| destroy-args | The arguments to pass to terraform destroy | false |  |
-| setup | Whether to setup | false | true |
-| init | Whether to init | false | true |
-| format | Whether to format | false | true |
-| validate | Whether to validate | false | true |
-| plan | Whether to plan | false | true |
-| apply | Whether to apply | false | false |
-| destroy | Whether to destroy | false | false |
+| Input Name        | Description                                                       | Required | Default   |
+| ----------------- | ----------------------------------------------------------------- | -------- | --------- |
+| directory         | The directory where the Terraform configuration files are located | false    | .         |
+| terraform-version | The version of Terraform to use                                   | false    | latest    |
+| plan-file         | The path to the plan file                                         | false    | plan.json |
+| common-args       | The arguments to pass to all terraform commands                   | false    |           |
+| init-args         | The arguments to pass to terraform init                           | false    |           |
+| validate-args     | The arguments to pass to terraform validate                       | false    |           |
+| fmt-args          | The arguments to pass to terraform fmt                            | false    | -check    |
+| plan-args         | The arguments to pass to terraform plan                           | false    |           |
+| apply-args        | The arguments to pass to terraform apply                          | false    |           |
+| destroy-args      | The arguments to pass to terraform destroy                        | false    |           |
+| setup             | Whether to setup                                                  | false    | true      |
+| init              | Whether to init                                                   | false    | true      |
+| format            | Whether to format                                                 | false    | true      |
+| validate          | Whether to validate                                               | false    | true      |
+| plan              | Whether to plan                                                   | false    | true      |
+| apply             | Whether to apply                                                  | false    | false     |
+| destroy           | Whether to destroy                                                | false    | false     |
 
 ## Outputs
 
-| Output Name | Description | Value |
-| --- | --- | --- |
+| Output Name | Description                     | Value                                  |
+| ----------- | ------------------------------- | -------------------------------------- |
 | output-json | JSON formatted terraform output | ${{ steps.apply.outputs.output-json }} |
 
 ## Changelog
