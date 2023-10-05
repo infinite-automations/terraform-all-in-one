@@ -33,12 +33,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        init-args: ["-no-color", ""]
-        validate-args: ["-no-color", ""]
+        common-args: ["-no-color", ""]
+        init-args: ["-upgrade", ""]
+        validate-args: ["-json", ""]
         fmt-args: ["-check", ""]
-        plan-args: ["-no-color", ""]
-        apply-args: ["-no-color", ""]
-        destroy-args: ["-no-color", ""]
+        plan-args: ["-parallelism=3", ""]
+        apply-args: ["-parallelism=2", ""]
+        destroy-args: ["-compact-warnings", ""]
       fail-fast: true
     steps:
       - name: Checkout
@@ -46,6 +47,7 @@ jobs:
       - name: Test
         uses: "./"
         with:
+          common-args: ${{ matrix.common-args }}
           init-args: ${{ matrix.init-args }}
           validate-args: ${{ matrix.validate-args }}
           fmt-args: ${{ matrix.fmt-args }}

@@ -15,6 +15,10 @@ inputs:
     description: "The path to the plan file"
     required: false
     default: "plan.json"
+  common-args:
+    description: "The arguments to pass to all terraform commands"
+    required: false
+    default: ""
   init-args:
     description: "The arguments to pass to terraform init"
     required: false
@@ -88,17 +92,17 @@ runs:
       shell: bash
     - name: Terraform Init
       if: ${{ inputs.init == 'true' }}
-      run: terraform init ${{ inputs.init-args }}
+      run: terraform init ${{ inputs.common-args }} ${{ inputs.init-args }}
       working-directory: ${{ inputs.directory }}
       shell: bash
     - name: Terraform Validate
       if: ${{ inputs.validate == 'true' }}
-      run: terraform validate ${{ inputs.validate-args }}
+      run: terraform validate ${{ inputs.common-args }} ${{ inputs.validate-args }}
       working-directory: ${{ inputs.directory }}
       shell: bash
     - name: Terraform Plan
       if: ${{ inputs.plan == 'true' }}
-      run: terraform plan ${{ inputs.plan-args }} -out ${{ inputs.plan-file }}
+      run: terraform plan ${{ inputs.common-args }} ${{ inputs.plan-args }} -out ${{ inputs.plan-file }}
       working-directory: ${{ inputs.directory }}
       shell: bash
     - name: Terraform Apply
@@ -107,15 +111,15 @@ runs:
       run: |
         if [ -f  ${{ inputs.plan-file }} ]
         then
-          terraform apply -auto-approve ${{ inputs.apply-args }} ${{ inputs.plan-file }}
+          terraform apply -auto-approve ${{ inputs.common-args }} ${{ inputs.apply-args }} ${{ inputs.plan-file }}
         else
-          terraform apply -auto-approve ${{ inputs.apply-args }}
+          terraform apply -auto-approve ${{ inputs.common-args }} ${{ inputs.apply-args }}
         fi
         echo output-json="'$(terraform output -json | jq -c)'" >> "$GITHUB_OUTPUT"
       working-directory: ${{ inputs.directory }}
       shell: bash
     - name: Terraform Destroy
       if: ${{ inputs.destroy == 'true' }}
-      run: terraform destroy -auto-approve ${{ inputs.destroy-args }}
+      run: terraform destroy -auto-approve ${{ inputs.common-args }} ${{ inputs.destroy-args }}
       working-directory: ${{ inputs.directory }}
       shell: bash
