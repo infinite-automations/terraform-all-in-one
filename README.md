@@ -22,7 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy With Value 1
-        uses: "m4s-b3n/terraform-all-in-one@v1.0.0"
+        uses: "m4s-b3n/terraform-all-in-one@v1.1.0"
         with:          
           directory: "./terraform"
           apply: true
@@ -32,7 +32,7 @@ jobs:
         run: |
           echo "Running test 1..."
       - name: Deploy With Value 2
-        uses: "m4s-b3n/terraform-all-in-one@v1.0.0"
+        uses: "m4s-b3n/terraform-all-in-one@v1.1.0"
         with:          
           directory: "./terraform"
           apply: true
@@ -42,7 +42,7 @@ jobs:
         run: |
           echo "Running test 2..."
       - name: Destroy
-        uses: "m4s-b3n/terraform-all-in-one@v1.0.0"
+        uses: "m4s-b3n/terraform-all-in-one@v1.1.0"
         with:          
           directory: "./terraform"
           setup: false
