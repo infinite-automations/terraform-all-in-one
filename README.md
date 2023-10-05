@@ -19,12 +19,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy
-        uses: "m4s-b3n/terraform-all-in-one@v0.0.0"
+        uses: "m4s-b3n/terraform-all-in-one@v1.0.0"
         with:          
           directory: "./terraform"
           apply: true
       - name: Destroy
-        uses: "m4s-b3n/terraform-all-in-one@v0.0.0"
+        uses: "m4s-b3n/terraform-all-in-one@v1.0.0"
         with:          
           directory: "./terraform"
           setup: false
