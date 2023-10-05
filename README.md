@@ -21,11 +21,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Deploy
+      - name: Deploy With Value 1
         uses: "m4s-b3n/terraform-all-in-one@v1.0.0"
         with:          
           directory: "./terraform"
           apply: true
+        env:
+          TF_VAR_my_var: "value1"
+      - name: Run Test 1
+        run: |
+          echo "Running test 1..."
+      - name: Deploy With Value 2
+        uses: "m4s-b3n/terraform-all-in-one@v1.0.0"
+        with:          
+          directory: "./terraform"
+          apply: true
+        env:
+          TF_VAR_my_var: "value2"
+      - name: Run Test 2
+        run: |
+          echo "Running test 2..."
       - name: Destroy
         uses: "m4s-b3n/terraform-all-in-one@v1.0.0"
         with:          
