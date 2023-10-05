@@ -1,4 +1,7 @@
 # terraform-all-in-one
+
+![Semantic Release](https://github.com/m4s-b3n/terraform-all-in-one/actions/workflows/test-and-release.yml/badge.svg)
+
 Run common Terraform commands in a single GitHub action
 
 ## Usage
