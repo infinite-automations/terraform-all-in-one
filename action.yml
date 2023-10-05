@@ -1,0 +1,121 @@
+name: "Terraform All-In-One"
+
+description: "Apply Terraform Configuration"
+
+inputs:
+  directory:
+    description: "The directory where the Terraform configuration files are located"
+    required: false
+    default: "."
+  terraform-version:
+    description: "The version of Terraform to use"
+    required: false
+    default: "latest"
+  plan-file:
+    description: "The path to the plan file"
+    required: false
+    default: "plan.json"
+  init-args:
+    description: "The arguments to pass to terraform init"
+    required: false
+    default: ""
+  validate-args:
+    description: "The arguments to pass to terraform validate"
+    required: false
+    default: ""
+  fmt-args:
+    description: "The arguments to pass to terraform fmt"
+    required: false
+    default: "-check"
+  plan-args:
+    description: "The arguments to pass to terraform plan"
+    required: false
+    default: ""
+  apply-args:
+    description: "The arguments to pass to terraform apply"
+    required: false
+    default: ""
+  destroy-args:
+    description: "The arguments to pass to terraform destroy"
+    required: false
+    default: ""
+  setup:
+    description: "Whether to setup"
+    required: false
+    default: "true"
+  init:
+    description: "Whether to init"
+    required: false
+    default: "true"
+  format:
+    description: "Whether to format"
+    required: false
+    default: "true"
+  validate:
+    description: "Whether to validate"
+    required: false
+    default: "true"
+  plan:
+    description: "Whether to plan"
+    required: false
+    default: "true"
+  apply:
+    description: "WHether to apply"
+    required: false
+    default: "false"
+  destroy:
+    description: "Whether to destroy"
+    required: false
+    default: "false"
+outputs:
+  output-json:
+    description: "JSON formatted terraform output"
+    value: ${{ steps.apply.outputs.output-json }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Terraform
+      if: ${{ inputs.setup == 'true' }}
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: ${{ inputs.terraform-version }}
+        terraform_wrapper: false
+    - name: Terraform fmt
+      if: ${{ inputs.format == 'true' }}
+      run: terraform fmt ${{ inputs.fmt-args }}
+      working-directory: ${{ inputs.directory }}
+      shell: bash
+    - name: Terraform Init
+      if: ${{ inputs.init == 'true' }}
+      run: terraform init ${{ inputs.init-args }}
+      working-directory: ${{ inputs.directory }}
+      shell: bash
+    - name: Terraform Validate
+      if: ${{ inputs.validate == 'true' }}
+      run: terraform validate ${{ inputs.validate-args }}
+      working-directory: ${{ inputs.directory }}
+      shell: bash
+    - name: Terraform Plan
+      if: ${{ inputs.plan == 'true' }}
+      run: terraform plan ${{ inputs.plan-args }} -out ${{ inputs.plan-file }}
+      working-directory: ${{ inputs.directory }}
+      shell: bash
+    - name: Terraform Apply
+      if: ${{ inputs.apply == 'true' }}
+      id: apply
+      run: |
+        if [ -f  ${{ inputs.plan-file }} ]
+        then
+          terraform apply -auto-approve ${{ inputs.apply-args }} ${{ inputs.plan-file }}
+        else
+          terraform apply -auto-approve ${{ inputs.apply-args }}
+        fi
+        echo output-json="'$(terraform output -json | jq -c)'" >> "$GITHUB_OUTPUT"
+      working-directory: ${{ inputs.directory }}
+      shell: bash
+    - name: Terraform Destroy
+      if: ${{ inputs.destroy == 'true' }}
+      run: terraform destroy -auto-approve ${{ inputs.destroy-args }}
+      working-directory: ${{ inputs.directory }}
+      shell: bash

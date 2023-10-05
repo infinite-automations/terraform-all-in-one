@@ -1,0 +1,125 @@
+name: "Test & Release"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  test-setup:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        terraform-version: ["1.5.7", "latest"]
+        plan-file: ["plan.json", "plan.out"]
+      fail-fast: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test
+        uses: "./"
+        with:
+          terraform-version: ${{ matrix.terraform-version }}
+          plan-file: ${{ matrix.plan-file }}
+          directory: "test/terraform"
+
+  test-args:
+    name: Test Arguments
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        init-args: ["-no-color", ""]
+        validate-args: ["-no-color", ""]
+        fmt-args: ["-check", ""]
+        plan-args: ["-no-color", ""]
+        apply-args: ["-no-color", ""]
+        destroy-args: ["-no-color", ""]
+      fail-fast: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test
+        uses: "./"
+        with:
+          init-args: ${{ matrix.init-args }}
+          validate-args: ${{ matrix.validate-args }}
+          fmt-args: ${{ matrix.fmt-args }}
+          plan-args: ${{ matrix.plan-args }}
+          apply-args: ${{ matrix.apply-args }}
+          destroy-args: ${{ matrix.destroy-args }}
+          directory: "test/terraform"
+
+  test-jobs:
+    name: Test Jobs
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        format: ["true", "false"]
+        validate: ["true", "false"]
+        plan: ["true", "false"]
+        apply: ["true", "false"]
+        destroy: ["true", "false"]
+      fail-fast: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test With Setup And Init
+        uses: "./"
+        with:
+          setup: true
+          init: true
+          format: ${{ matrix.format }}
+          validate: ${{ matrix.validate }}
+          plan: ${{ matrix.plan }}
+          apply: ${{ matrix.apply }}
+          destroy: ${{ matrix.destroy }}
+          directory: "test/terraform"
+      - name: Test With Init Only
+        uses: "./"
+        with:
+          setup: false
+          init: true
+          format: ${{ matrix.format }}
+          validate: ${{ matrix.validate }}
+          plan: ${{ matrix.plan }}
+          apply: ${{ matrix.apply }}
+          destroy: ${{ matrix.destroy }}
+          directory: "test/terraform"
+      - name: Test Without Setup And Init
+        uses: "./"
+        with:
+          setup: false
+          init: false
+          format: ${{ matrix.format }}
+          validate: ${{ matrix.validate }}
+          plan: ${{ matrix.plan }}
+          apply: ${{ matrix.apply }}
+          destroy: ${{ matrix.destroy }}
+          directory: "test/terraform"
+
+  release:
+    name: Release
+    needs:
+      - test-setup
+      - test-args
+      - test-jobs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Semantic Release Plugins
+        run: |
+          npm install semantic-release-replace-plugin -D
+          npm install --save-dev semantic-release-major-tag
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          dry_run: ${{ github.event_name == 'pull_request' }}
+          ci: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
