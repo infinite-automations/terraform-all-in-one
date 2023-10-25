@@ -13,6 +13,9 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+    
+permissions:
+  contents: read
 
 jobs:
   deploy:
