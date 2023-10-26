@@ -1,6 +1,6 @@
 # terraform-all-in-one
 
-![Semantic Release](https://github.com/m4s-b3n/terraform-all-in-one/actions/workflows/test-and-release.yml/badge.svg)
+![Semantic Release](https://github.com/infinite-automations/terraform-all-in-one/actions/workflows/test-and-release.yml/badge.svg)
 
 Run common Terraform commands in a single GitHub action
 
@@ -25,7 +25,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy With Value 1
-        uses: "m4s-b3n/terraform-all-in-one@v1.1.0"
+        uses: "infinite-automations/terraform-all-in-one@v1.1.0"
         with:          
           directory: "./terraform"
           apply: true
@@ -35,7 +35,7 @@ jobs:
         run: |
           echo "Running test 1..."
       - name: Deploy With Value 2
-        uses: "m4s-b3n/terraform-all-in-one@v1.1.0"
+        uses: "infinite-automations/terraform-all-in-one@v1.1.0"
         with:          
           directory: "./terraform"
           apply: true
@@ -45,7 +45,7 @@ jobs:
         run: |
           echo "Running test 2..."
       - name: Destroy
-        uses: "m4s-b3n/terraform-all-in-one@v1.1.0"
+        uses: "infinite-automations/terraform-all-in-one@v1.1.0"
         with:          
           directory: "./terraform"
           setup: false
@@ -57,7 +57,7 @@ jobs:
           destroy: true
 ```
 
-You can configure additional command arguments with inputs. 
+You can configure additional command arguments with inputs.
 
 ## Inputs
 
@@ -88,4 +88,5 @@ You can configure additional command arguments with inputs.
 | output-json | JSON formatted terraform output | ${{ steps.apply.outputs.output-json }} |
 
 ## Changelog
+
 See the [Changelog](./CHANGELOG.md) file for details
