@@ -7,6 +7,10 @@ inputs:
     description: "The directory where the Terraform configuration files are located"
     required: false
     default: "."
+  test-directory:
+    description: "The directory where the Terraform test configuration files are located"
+    required: false
+    default: "."
   terraform-version:
     description: "The version of Terraform to use"
     required: false
@@ -31,6 +35,10 @@ inputs:
     description: "The arguments to pass to terraform fmt"
     required: false
     default: "-check"
+  test-args:
+    description: "The arguments to pass to terraform test"
+    required: false
+    default: ""
   plan-args:
     description: "The arguments to pass to terraform plan"
     required: false
@@ -59,6 +67,10 @@ inputs:
     description: "Whether to validate"
     required: false
     default: "true"
+  test:
+    description: "Whether to test"
+    required: false
+    default: "false"
   plan:
     description: "Whether to plan"
     required: false
@@ -99,6 +111,11 @@ runs:
       if: ${{ inputs.validate == 'true' }}
       run: terraform validate ${{ inputs.common-args }} ${{ inputs.validate-args }}
       working-directory: ${{ inputs.directory }}
+      shell: bash
+    - name: Terraform Test
+      if: ${{ inputs.test == 'true' }}
+      run: terraform test ${{ inputs.common-args }} ${{ inputs.test-args }}
+      working-directory: ${{ inputs.test-directory }}
       shell: bash
     - name: Terraform Plan
       if: ${{ inputs.plan == 'true' }}

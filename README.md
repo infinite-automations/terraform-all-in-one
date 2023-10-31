@@ -13,7 +13,7 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-    
+
 permissions:
   contents: read
 
@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Deploy With Value 1
         uses: "infinite-automations/terraform-all-in-one@v1.1.0"
-        with:          
+        with:
           directory: "./terraform"
           apply: true
         env:
@@ -36,17 +36,23 @@ jobs:
           echo "Running test 1..."
       - name: Deploy With Value 2
         uses: "infinite-automations/terraform-all-in-one@v1.1.0"
-        with:          
+        with:
           directory: "./terraform"
           apply: true
         env:
           TF_VAR_my_var: "value2"
       - name: Run Test 2
-        run: |
-          echo "Running test 2..."
+        uses: "infinite-automations/terraform-all-in-one@v1.1.0"
+        with:
+          directory: "./terraform"
+          test-directory: "./terraform"
+          format: false
+          validate: false
+          plan: false
+          test: true
       - name: Destroy
         uses: "infinite-automations/terraform-all-in-one@v1.1.0"
-        with:          
+        with:
           directory: "./terraform"
           setup: false
           init: false
@@ -61,25 +67,28 @@ You can configure additional command arguments with inputs.
 
 ## Inputs
 
-| Input Name        | Description                                                       | Required | Default   |
-| ----------------- | ----------------------------------------------------------------- | -------- | --------- |
-| directory         | The directory where the Terraform configuration files are located | false    | .         |
-| terraform-version | The version of Terraform to use                                   | false    | latest    |
-| plan-file         | The path to the plan file                                         | false    | plan.json |
-| common-args       | The arguments to pass to all terraform commands                   | false    |           |
-| init-args         | The arguments to pass to terraform init                           | false    |           |
-| validate-args     | The arguments to pass to terraform validate                       | false    |           |
-| fmt-args          | The arguments to pass to terraform fmt                            | false    | -check    |
-| plan-args         | The arguments to pass to terraform plan                           | false    |           |
-| apply-args        | The arguments to pass to terraform apply                          | false    |           |
-| destroy-args      | The arguments to pass to terraform destroy                        | false    |           |
-| setup             | Whether to setup                                                  | false    | true      |
-| init              | Whether to init                                                   | false    | true      |
-| format            | Whether to format                                                 | false    | true      |
-| validate          | Whether to validate                                               | false    | true      |
-| plan              | Whether to plan                                                   | false    | true      |
-| apply             | Whether to apply                                                  | false    | false     |
-| destroy           | Whether to destroy                                                | false    | false     |
+| Input Name        | Description                                                            | Required | Default   |
+| ----------------- | ---------------------------------------------------------------------- | -------- | --------- |
+| directory         | The directory where the Terraform configuration files are located      | false    | .         |
+| test-directory    | The directory where the Terraform test configuration files are located | false    | .         |
+| terraform-version | The version of Terraform to use                                        | false    | latest    |
+| plan-file         | The path to the plan file                                              | false    | plan.json |
+| common-args       | The arguments to pass to all terraform commands                        | false    |           |
+| init-args         | The arguments to pass to terraform init                                | false    |           |
+| validate-args     | The arguments to pass to terraform validate                            | false    |           |
+| fmt-args          | The arguments to pass to terraform fmt                                 | false    | -check    |
+| test-args         | The arguments to pass to terraform test                                | false    |           |
+| plan-args         | The arguments to pass to terraform plan                                | false    |           |
+| apply-args        | The arguments to pass to terraform apply                               | false    |           |
+| destroy-args      | The arguments to pass to terraform destroy                             | false    |           |
+| setup             | Whether to setup                                                       | false    | true      |
+| init              | Whether to init                                                        | false    | true      |
+| format            | Whether to format                                                      | false    | true      |
+| validate          | Whether to validate                                                    | false    | true      |
+| test              | Whether to test                                                        | false    | false     |
+| plan              | Whether to plan                                                        | false    | true      |
+| apply             | Whether to apply                                                       | false    | false     |
+| destroy           | Whether to destroy                                                     | false    | false     |
 
 ## Outputs
 
