@@ -63,6 +63,7 @@ jobs:
       matrix:
         format: ["true", "false"]
         validate: ["true", "false"]
+        test: ["true", "false"]
         plan: ["true", "false"]
         apply: ["true", "false"]
         destroy: ["true", "false"]
@@ -77,6 +78,7 @@ jobs:
           init: true
           format: ${{ matrix.format }}
           validate: ${{ matrix.validate }}
+          test: ${{ matrix.test }}
           plan: ${{ matrix.plan }}
           apply: ${{ matrix.apply }}
           destroy: ${{ matrix.destroy }}
@@ -88,6 +90,7 @@ jobs:
           init: true
           format: ${{ matrix.format }}
           validate: ${{ matrix.validate }}
+          test: ${{ matrix.test }}
           plan: ${{ matrix.plan }}
           apply: ${{ matrix.apply }}
           destroy: ${{ matrix.destroy }}
@@ -99,10 +102,32 @@ jobs:
           init: false
           format: ${{ matrix.format }}
           validate: ${{ matrix.validate }}
+          test: ${{ matrix.test }}
           plan: ${{ matrix.plan }}
           apply: ${{ matrix.apply }}
           destroy: ${{ matrix.destroy }}
           directory: "test/terraform"
+
+  test-terraform-test:
+    name: Test terraform test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-args: ["-json", ""]
+      fail-fast: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test
+        uses: "./"
+        with:
+          directory: "test/terraform"
+          test-directory: "test/terraform"
+          test-args: ${{ matrix.test-args }}
+          format: false
+          validate: false
+          plan: false
+          test: true
 
   release:
     name: Release
@@ -110,6 +135,7 @@ jobs:
       - test-setup
       - test-args
       - test-jobs
+      - test-terraform-test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
