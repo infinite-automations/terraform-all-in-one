@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/infinite-automations/terraform-all-in-one/compare/v1.1.0...v1.2.0) (2023-11-01)
+
+
+### Features
+
+* add terraform test command ([d33a74d](https://github.com/infinite-automations/terraform-all-in-one/commit/d33a74d95be0f9f447325e9d0551844469da4539))
+
 # [1.1.0](https://github.com/infinite-automations/terraform-all-in-one/compare/v1.0.0...v1.1.0) (2023-10-05)
 
 ### Features

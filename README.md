@@ -25,7 +25,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy With Value 1
-        uses: "infinite-automations/terraform-all-in-one@v1.1.0"
+        uses: "infinite-automations/terraform-all-in-one@v1.2.0"
         with:
           directory: "./terraform"
           apply: true
@@ -35,14 +35,14 @@ jobs:
         run: |
           echo "Running test 1..."
       - name: Deploy With Value 2
-        uses: "infinite-automations/terraform-all-in-one@v1.1.0"
+        uses: "infinite-automations/terraform-all-in-one@v1.2.0"
         with:
           directory: "./terraform"
           apply: true
         env:
           TF_VAR_my_var: "value2"
       - name: Run Test 2
-        uses: "infinite-automations/terraform-all-in-one@v1.1.0"
+        uses: "infinite-automations/terraform-all-in-one@v1.2.0"
         with:
           directory: "./terraform"
           test-directory: "./terraform"
@@ -51,7 +51,7 @@ jobs:
           plan: false
           test: true
       - name: Destroy
-        uses: "infinite-automations/terraform-all-in-one@v1.1.0"
+        uses: "infinite-automations/terraform-all-in-one@v1.2.0"
         with:
           directory: "./terraform"
           setup: false
