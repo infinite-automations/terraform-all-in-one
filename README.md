@@ -1,100 +1,177 @@
 # terraform-all-in-one
 
-![Semantic Release](https://github.com/infinite-automations/terraform-all-in-one/actions/workflows/test-and-release.yml/badge.svg)
+![Release](https://github.com/infinite-automations/terraform-all-in-one/actions/workflows/release.yml/badge.svg)
 
 Run common Terraform commands in a single GitHub action
+
+<!-- action-docs-all source="action.yml" project="infinite-automations/terraform-all-in-one" version="0.0.0" -->
+## Description
+
+Apply Terraform Configuration
+
+## Inputs
+
+| name | description | required | default |
+| --- | --- | --- | --- |
+| `directory` | <p>The directory where the Terraform configuration files are located</p> | `false` | `.` |
+| `test-directory` | <p>The directory where the Terraform test configuration files are located</p> | `false` | `.` |
+| `terraform-version` | <p>The version of Terraform to use</p> | `false` | `latest` |
+| `plan-file` | <p>The path to the plan file</p> | `false` | `plan.json` |
+| `common-args` | <p>The arguments to pass to all terraform commands</p> | `false` | `""` |
+| `init-args` | <p>The arguments to pass to terraform init</p> | `false` | `""` |
+| `validate-args` | <p>The arguments to pass to terraform validate</p> | `false` | `""` |
+| `fmt-args` | <p>The arguments to pass to terraform fmt</p> | `false` | `-check` |
+| `test-args` | <p>The arguments to pass to terraform test</p> | `false` | `""` |
+| `plan-args` | <p>The arguments to pass to terraform plan</p> | `false` | `""` |
+| `apply-args` | <p>The arguments to pass to terraform apply</p> | `false` | `""` |
+| `destroy-args` | <p>The arguments to pass to terraform destroy</p> | `false` | `""` |
+| `setup` | <p>Whether to setup</p> | `false` | `true` |
+| `init` | <p>Whether to init</p> | `false` | `true` |
+| `format` | <p>Whether to format</p> | `false` | `true` |
+| `validate` | <p>Whether to validate</p> | `false` | `true` |
+| `test` | <p>Whether to test</p> | `false` | `false` |
+| `plan` | <p>Whether to plan</p> | `false` | `true` |
+| `apply` | <p>WHether to apply</p> | `false` | `false` |
+| `destroy` | <p>Whether to destroy</p> | `false` | `false` |
+
+
+## Outputs
+
+| name | description |
+| --- | --- |
+| `output-json` | <p>JSON formatted terraform output</p> |
+
+
+## Runs
+
+This action is a `composite` action.
 
 ## Usage
 
 ```yaml
-name: Deploy
-on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+- uses: infinite-automations/terraform-all-in-one@0.0.0
+  with:
+    directory:
+    # The directory where the Terraform configuration files are located
+    #
+    # Required: false
+    # Default: .
 
-permissions:
-  contents: read
+    test-directory:
+    # The directory where the Terraform test configuration files are located
+    #
+    # Required: false
+    # Default: .
 
-jobs:
-  deploy:
-    name: Deploy And Destroy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Deploy With Value 1
-        uses: "infinite-automations/terraform-all-in-one@v1.2.0"
-        with:
-          directory: "./terraform"
-          apply: true
-        env:
-          TF_VAR_my_var: "value1"
-      - name: Run Test 1
-        run: |
-          echo "Running test 1..."
-      - name: Deploy With Value 2
-        uses: "infinite-automations/terraform-all-in-one@v1.2.0"
-        with:
-          directory: "./terraform"
-          apply: true
-        env:
-          TF_VAR_my_var: "value2"
-      - name: Run Test 2
-        uses: "infinite-automations/terraform-all-in-one@v1.2.0"
-        with:
-          directory: "./terraform"
-          test-directory: "./terraform"
-          format: false
-          validate: false
-          plan: false
-          test: true
-      - name: Destroy
-        uses: "infinite-automations/terraform-all-in-one@v1.2.0"
-        with:
-          directory: "./terraform"
-          setup: false
-          init: false
-          format: false
-          validate: false
-          plan: false
-          apply: false
-          destroy: true
+    terraform-version:
+    # The version of Terraform to use
+    #
+    # Required: false
+    # Default: latest
+
+    plan-file:
+    # The path to the plan file
+    #
+    # Required: false
+    # Default: plan.json
+
+    common-args:
+    # The arguments to pass to all terraform commands
+    #
+    # Required: false
+    # Default: ""
+
+    init-args:
+    # The arguments to pass to terraform init
+    #
+    # Required: false
+    # Default: ""
+
+    validate-args:
+    # The arguments to pass to terraform validate
+    #
+    # Required: false
+    # Default: ""
+
+    fmt-args:
+    # The arguments to pass to terraform fmt
+    #
+    # Required: false
+    # Default: -check
+
+    test-args:
+    # The arguments to pass to terraform test
+    #
+    # Required: false
+    # Default: ""
+
+    plan-args:
+    # The arguments to pass to terraform plan
+    #
+    # Required: false
+    # Default: ""
+
+    apply-args:
+    # The arguments to pass to terraform apply
+    #
+    # Required: false
+    # Default: ""
+
+    destroy-args:
+    # The arguments to pass to terraform destroy
+    #
+    # Required: false
+    # Default: ""
+
+    setup:
+    # Whether to setup
+    #
+    # Required: false
+    # Default: true
+
+    init:
+    # Whether to init
+    #
+    # Required: false
+    # Default: true
+
+    format:
+    # Whether to format
+    #
+    # Required: false
+    # Default: true
+
+    validate:
+    # Whether to validate
+    #
+    # Required: false
+    # Default: true
+
+    test:
+    # Whether to test
+    #
+    # Required: false
+    # Default: false
+
+    plan:
+    # Whether to plan
+    #
+    # Required: false
+    # Default: true
+
+    apply:
+    # WHether to apply
+    #
+    # Required: false
+    # Default: false
+
+    destroy:
+    # Whether to destroy
+    #
+    # Required: false
+    # Default: false
 ```
-
-You can configure additional command arguments with inputs.
-
-## Inputs
-
-| Input Name        | Description                                                            | Required | Default   |
-| ----------------- | ---------------------------------------------------------------------- | -------- | --------- |
-| directory         | The directory where the Terraform configuration files are located      | false    | .         |
-| test-directory    | The directory where the Terraform test configuration files are located | false    | .         |
-| terraform-version | The version of Terraform to use                                        | false    | latest    |
-| plan-file         | The path to the plan file                                              | false    | plan.json |
-| common-args       | The arguments to pass to all terraform commands                        | false    |           |
-| init-args         | The arguments to pass to terraform init                                | false    |           |
-| validate-args     | The arguments to pass to terraform validate                            | false    |           |
-| fmt-args          | The arguments to pass to terraform fmt                                 | false    | -check    |
-| test-args         | The arguments to pass to terraform test                                | false    |           |
-| plan-args         | The arguments to pass to terraform plan                                | false    |           |
-| apply-args        | The arguments to pass to terraform apply                               | false    |           |
-| destroy-args      | The arguments to pass to terraform destroy                             | false    |           |
-| setup             | Whether to setup                                                       | false    | true      |
-| init              | Whether to init                                                        | false    | true      |
-| format            | Whether to format                                                      | false    | true      |
-| validate          | Whether to validate                                                    | false    | true      |
-| test              | Whether to test                                                        | false    | false     |
-| plan              | Whether to plan                                                        | false    | true      |
-| apply             | Whether to apply                                                       | false    | false     |
-| destroy           | Whether to destroy                                                     | false    | false     |
-
-## Outputs
-
-| Output Name | Description                     | Value                                  |
-| ----------- | ------------------------------- | -------------------------------------- |
-| output-json | JSON formatted terraform output | ${{ steps.apply.outputs.output-json }} |
+<!-- action-docs-all source="action.yml" project="infinite-automations/terraform-all-in-one" version="0.0.0" -->
 
 ## Changelog
 

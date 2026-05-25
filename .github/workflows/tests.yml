@@ -1,0 +1,258 @@
+---
+name: Tests
+
+on:
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  # jscpd:ignore-start
+
+  test-setup:
+    name: Test Setup
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - terraform-version: "latest"
+            plan-file: "plan.json"
+          - terraform-version: "1.5.7"
+            plan-file: "plan.out"
+      fail-fast: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Test
+        uses: "./"
+        with:
+          terraform-version: ${{ matrix.terraform-version }}
+          plan-file: ${{ matrix.plan-file }}
+          directory: "test/terraform"
+
+  test-args:
+    name: Test Arguments
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - name: "all-args"
+            common-args: "-no-color"
+            init-args: "-upgrade"
+            validate-args: "-json"
+            fmt-args: "-check"
+            plan-args: "-parallelism=3"
+            apply-args: "-parallelism=2"
+            destroy-args: "-compact-warnings"
+          - name: "defaults"
+            common-args: ""
+            init-args: ""
+            validate-args: ""
+            fmt-args: ""
+            plan-args: ""
+            apply-args: ""
+            destroy-args: ""
+          - name: "common-only"
+            common-args: "-no-color"
+            init-args: ""
+            validate-args: ""
+            fmt-args: ""
+            plan-args: ""
+            apply-args: ""
+            destroy-args: ""
+          - name: "plan-apply-args"
+            common-args: ""
+            init-args: "-upgrade"
+            validate-args: ""
+            fmt-args: ""
+            plan-args: "-parallelism=3"
+            apply-args: "-parallelism=2"
+            destroy-args: "-compact-warnings"
+      fail-fast: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Test
+        uses: "./"
+        with:
+          common-args: ${{ matrix.common-args }}
+          init-args: ${{ matrix.init-args }}
+          validate-args: ${{ matrix.validate-args }}
+          fmt-args: ${{ matrix.fmt-args }}
+          plan-args: ${{ matrix.plan-args }}
+          apply-args: ${{ matrix.apply-args }}
+          destroy-args: ${{ matrix.destroy-args }}
+          directory: "test/terraform"
+
+  test-jobs:
+    name: Test Jobs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - name: "all-enabled"
+            setup: true
+            init: true
+            format: true
+            validate: true
+            test: true
+            plan: true
+            apply: true
+            destroy: true
+          - name: "lint-only"
+            setup: true
+            init: true
+            format: true
+            validate: true
+            test: false
+            plan: false
+            apply: false
+            destroy: false
+          - name: "plan-apply-destroy"
+            setup: true
+            init: true
+            format: false
+            validate: false
+            test: false
+            plan: true
+            apply: true
+            destroy: true
+          - name: "test-only"
+            setup: true
+            init: true
+            format: false
+            validate: false
+            test: true
+            plan: false
+            apply: false
+            destroy: false
+      fail-fast: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Test
+        uses: "./"
+        with:
+          setup: ${{ matrix.setup }}
+          init: ${{ matrix.init }}
+          format: ${{ matrix.format }}
+          validate: ${{ matrix.validate }}
+          test: ${{ matrix.test }}
+          plan: ${{ matrix.plan }}
+          apply: ${{ matrix.apply }}
+          destroy: ${{ matrix.destroy }}
+          directory: "test/terraform"
+
+  test-no-setup:
+    name: Test No Setup
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - name: "all-disabled"
+            terraform-version: "1.5.7"
+            init: false
+            format: false
+            validate: false
+            test: false
+            plan: false
+            apply: false
+            destroy: false
+          - name: "no-setup"
+            terraform-version: "1.9.0"
+            init: true
+            format: true
+            validate: true
+            test: false
+            plan: true
+            apply: false
+            destroy: false
+      fail-fast: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4
+        with:
+          terraform_version: ${{ matrix.terraform-version }}
+          terraform_wrapper: false
+
+      - name: Verify Terraform version before
+        id: before
+        run: echo "version=$(terraform version -json | jq -r '.terraform_version')" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: Test
+        uses: "./"
+        with:
+          setup: false
+          init: ${{ matrix.init }}
+          format: ${{ matrix.format }}
+          validate: ${{ matrix.validate }}
+          test: ${{ matrix.test }}
+          plan: ${{ matrix.plan }}
+          apply: ${{ matrix.apply }}
+          destroy: ${{ matrix.destroy }}
+          directory: "test/terraform"
+
+      - name: Verify Terraform version after
+        run: |
+          AFTER=$(terraform version -json | jq -r '.terraform_version')
+          if [ "$AFTER" != "$BEFORE_VERSION" ]; then
+            echo "::error::Terraform version changed from $BEFORE_VERSION to $AFTER"
+            exit 1
+          fi
+          echo "Terraform version unchanged: $AFTER"
+        shell: bash
+        env:
+          BEFORE_VERSION: ${{ steps.before.outputs.version }}
+
+  test-terraform-test:
+    name: Test terraform test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - test-args: "-json"
+          - test-args: ""
+      fail-fast: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Test
+        uses: "./"
+        with:
+          directory: "test/terraform"
+          test-directory: "test/terraform"
+          test-args: ${{ matrix.test-args }}
+          format: false
+          validate: false
+          plan: false
+          test: true
+
+  # jscpd:ignore-end

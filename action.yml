@@ -1,3 +1,4 @@
+---
 name: "Terraform All-In-One"
 
 description: "Apply Terraform Configuration"
@@ -99,44 +100,66 @@ runs:
         terraform_wrapper: false
     - name: Terraform fmt
       if: ${{ inputs.format == 'true' }}
-      run: terraform fmt ${{ inputs.fmt-args }}
+      run: terraform fmt ${INPUTS_FMT_ARGS}
       working-directory: ${{ inputs.directory }}
       shell: bash
+      env:
+        INPUTS_FMT_ARGS: ${{ inputs.fmt-args }}
     - name: Terraform Init
       if: ${{ inputs.init == 'true' }}
-      run: terraform init ${{ inputs.common-args }} ${{ inputs.init-args }}
+      run: terraform init ${INPUTS_COMMON_ARGS} ${INPUTS_INIT_ARGS}
       working-directory: ${{ inputs.directory }}
       shell: bash
+      env:
+        INPUTS_COMMON_ARGS: ${{ inputs.common-args }}
+        INPUTS_INIT_ARGS: ${{ inputs.init-args }}
     - name: Terraform Validate
       if: ${{ inputs.validate == 'true' }}
-      run: terraform validate ${{ inputs.common-args }} ${{ inputs.validate-args }}
+      run: terraform validate ${INPUTS_COMMON_ARGS} ${INPUTS_VALIDATE_ARGS}
       working-directory: ${{ inputs.directory }}
       shell: bash
+      env:
+        INPUTS_COMMON_ARGS: ${{ inputs.common-args }}
+        INPUTS_VALIDATE_ARGS: ${{ inputs.validate-args }}
     - name: Terraform Test
       if: ${{ inputs.test == 'true' }}
-      run: terraform test ${{ inputs.common-args }} ${{ inputs.test-args }}
+      run: terraform test ${INPUTS_COMMON_ARGS} ${INPUTS_TEST_ARGS}
       working-directory: ${{ inputs.test-directory }}
       shell: bash
+      env:
+        INPUTS_COMMON_ARGS: ${{ inputs.common-args }}
+        INPUTS_TEST_ARGS: ${{ inputs.test-args }}
     - name: Terraform Plan
       if: ${{ inputs.plan == 'true' }}
-      run: terraform plan ${{ inputs.common-args }} ${{ inputs.plan-args }} -out ${{ inputs.plan-file }}
+      run: terraform plan ${INPUTS_COMMON_ARGS} ${INPUTS_PLAN_ARGS} -out ${INPUTS_PLAN_FILE}
       working-directory: ${{ inputs.directory }}
       shell: bash
+      env:
+        INPUTS_COMMON_ARGS: ${{ inputs.common-args }}
+        INPUTS_PLAN_ARGS: ${{ inputs.plan-args }}
+        INPUTS_PLAN_FILE: ${{ inputs.plan-file }}
     - name: Terraform Apply
       if: ${{ inputs.apply == 'true' }}
       id: apply
       run: |
-        if [ -f  ${{ inputs.plan-file }} ]
+        if [ -f  ${INPUTS_PLAN_FILE} ]
         then
-          terraform apply -auto-approve ${{ inputs.common-args }} ${{ inputs.apply-args }} ${{ inputs.plan-file }}
+          terraform apply -auto-approve ${INPUTS_COMMON_ARGS} ${INPUTS_APPLY_ARGS} ${INPUTS_PLAN_FILE}
         else
-          terraform apply -auto-approve ${{ inputs.common-args }} ${{ inputs.apply-args }}
+          terraform apply -auto-approve ${INPUTS_COMMON_ARGS} ${INPUTS_APPLY_ARGS}
         fi
         echo output-json="'$(terraform output -json | jq -c)'" >> "$GITHUB_OUTPUT"
       working-directory: ${{ inputs.directory }}
       shell: bash
+      env:
+        INPUTS_PLAN_FILE: ${{ inputs.plan-file }}
+        INPUTS_COMMON_ARGS: ${{ inputs.common-args }}
+        INPUTS_APPLY_ARGS: ${{ inputs.apply-args }}
     - name: Terraform Destroy
       if: ${{ inputs.destroy == 'true' }}
-      run: terraform destroy -auto-approve ${{ inputs.common-args }} ${{ inputs.destroy-args }}
+      run: terraform destroy -auto-approve ${INPUTS_COMMON_ARGS} ${INPUTS_DESTROY_ARGS}
       working-directory: ${{ inputs.directory }}
       shell: bash
+      env:
+        INPUTS_COMMON_ARGS: ${{ inputs.common-args }}
+        INPUTS_DESTROY_ARGS: ${{ inputs.destroy-args }}

@@ -1,7 +1,5 @@
 {
-  "branches": [
-    "main"
-  ],
+  "branches": ["main"],
   "tagFormat": "v${version}",
   "plugins": [
     "@semantic-release/commit-analyzer",
@@ -18,9 +16,7 @@
       {
         "replacements": [
           {
-            "files": [
-              "README.md"
-            ],
+            "files": ["README.md"],
             "from": "\"infinite-automations/terraform-all-in-one@v.*\"",
             "to": "\"infinite-automations/terraform-all-in-one@v${nextRelease.version}\"",
             "results": [
@@ -40,10 +36,7 @@
       "@semantic-release/git",
       {
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
-        "assets": [
-          "CHANGELOG.md",
-          "README.md"
-        ]
+        "assets": ["CHANGELOG.md", "README.md"]
       }
     ],
     "@semantic-release/github"
